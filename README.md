@@ -9,7 +9,7 @@
 
 # BankApp - User & Role Management System
 
-BankApp is a Windows Forms application built with C# and WebView2, designed for managing users, roles, and authentication in a banking context. It provides a clean and modern interface for user management, including password security with PBKDF2 hashing, role assignment, and real-time interaction using WebView2 for forms.
+BankApp is a Windows Forms application built with C# and WebView2, designed for managing users, roles, and authentication in a banking context. It provides a clean and modern interface for user management, including password security with hashing, role assignment, and interaction using WebView2 for forms.
 
 ---
 
