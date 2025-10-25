@@ -1,0 +1,1054 @@
+USE [master]
+GO
+/****** Object:  Database [BankApp]    Script Date: 10/25/2025 9:13:26 PM ******/
+CREATE DATABASE [BankApp]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'BankApp', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\BankApp.mdf' , SIZE = 3072KB , MAXSIZE = UNLIMITED, FILEGROWTH = 1024KB )
+ LOG ON 
+( NAME = N'BankApp_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\BankApp_log.ldf' , SIZE = 1024KB , MAXSIZE = 2048GB , FILEGROWTH = 10%)
+GO
+ALTER DATABASE [BankApp] SET COMPATIBILITY_LEVEL = 120
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [BankApp].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [BankApp] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [BankApp] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [BankApp] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [BankApp] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [BankApp] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [BankApp] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [BankApp] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [BankApp] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [BankApp] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [BankApp] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [BankApp] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [BankApp] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [BankApp] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [BankApp] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [BankApp] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [BankApp] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [BankApp] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [BankApp] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [BankApp] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [BankApp] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [BankApp] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [BankApp] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [BankApp] SET RECOVERY FULL 
+GO
+ALTER DATABASE [BankApp] SET  MULTI_USER 
+GO
+ALTER DATABASE [BankApp] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [BankApp] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [BankApp] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [BankApp] SET TARGET_RECOVERY_TIME = 0 SECONDS 
+GO
+ALTER DATABASE [BankApp] SET DELAYED_DURABILITY = DISABLED 
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'BankApp', N'ON'
+GO
+USE [BankApp]
+GO
+/****** Object:  Table [dbo].[Accounts]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Accounts](
+	[AccountId] [int] IDENTITY(1,1) NOT NULL,
+	[IBAN] [nvarchar](64) NOT NULL,
+	[CustomerId] [int] NOT NULL,
+	[AccountName] [nvarchar](200) NULL,
+	[OpeningBalance] [decimal](18, 2) NOT NULL,
+	[CachedBalance] [decimal](18, 2) NOT NULL,
+	[BalanceChecksum] [binary](32) NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+	[ModifiedAt] [datetime2](7) NULL,
+	[CreatedBy] [int] NULL,
+	[isdeleted] [bit] NOT NULL,
+	[deletedby] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AccountId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[IBAN] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Customers]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Customers](
+	[CustomerId] [int] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](100) NOT NULL,
+	[LastName] [nvarchar](100) NOT NULL,
+	[Street] [nvarchar](200) NULL,
+	[HouseNumber] [nvarchar](50) NULL,
+	[ZipCode] [nvarchar](20) NULL,
+	[City] [nvarchar](100) NULL,
+	[PhoneNumber] [nvarchar](50) NOT NULL,
+	[EmailAddress] [nvarchar](200) NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+	[ModifiedAt] [datetime2](7) NULL,
+	[CreatedBy] [int] NULL,
+	[TaxId] [nvarchar](20) NOT NULL,
+	[deleted] [bit] NULL,
+	[deletedby] [int] NULL,
+ CONSTRAINT [PK__Customer__A4AE64D840B0AEF2] PRIMARY KEY CLUSTERED 
+(
+	[CustomerId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[RoleTBL]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[RoleTBL](
+	[Id] [smallint] IDENTITY(1,1) NOT NULL,
+	[RoleName] [nvarchar](10) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[RoleName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Transactioncounterpart]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Transactioncounterpart](
+	[TransactionId] [bigint] NOT NULL,
+	[CounterpartyIBAN] [nvarchar](64) NOT NULL,
+	[yourIBAN] [nvarchar](64) NOT NULL,
+	[TransactionType] [int] NOT NULL,
+ CONSTRAINT [PK_Transactioncounterpart] PRIMARY KEY CLUSTERED 
+(
+	[TransactionId] ASC,
+	[CounterpartyIBAN] ASC,
+	[yourIBAN] ASC,
+	[TransactionType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ__Transact__55433A6ACE2E8B89] UNIQUE NONCLUSTERED 
+(
+	[TransactionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Transactions]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Transactions](
+	[TransactionId] [bigint] IDENTITY(1,1) NOT NULL,
+	[AccountId] [int] NOT NULL,
+	[TransactionDate] [datetime2](7) NOT NULL,
+	[Amount] [decimal](18, 2) NOT NULL,
+	[Purpose] [nvarchar](200) NULL,
+	[TransactionTypeId] [int] NOT NULL,
+	[CreatedByUserId] [int] NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
+	[DeletedByUserId] [int] NULL,
+	[DeletedAt] [datetime2](7) NULL,
+ CONSTRAINT [PK__Transact__55433A6BBED3A91B] PRIMARY KEY CLUSTERED 
+(
+	[TransactionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[TransactionTypes]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TransactionTypes](
+	[TransactionTypeId] [int] NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK__Transact__20266D0BFD496B22] PRIMARY KEY CLUSTERED 
+(
+	[TransactionTypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Users]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Users](
+	[UserId] [int] IDENTITY(1,1) NOT NULL,
+	[Username] [nvarchar](100) NOT NULL,
+	[FullName] [nvarchar](200) NULL,
+	[Password] [nvarchar](max) NULL,
+	[Role] [smallint] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[Deleted] [bit] NOT NULL,
+	[deletedby] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  View [dbo].[incommingtransaction]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[incommingtransaction]
+AS
+SELECT dbo.Accounts.AccountId, dbo.Transactioncounterpart.CounterpartyIBAN, dbo.Transactioncounterpart.TransactionType, dbo.Transactioncounterpart.TransactionId, dbo.Accounts.CustomerId
+FROM     dbo.Transactioncounterpart INNER JOIN
+                  dbo.Accounts ON dbo.Transactioncounterpart.CounterpartyIBAN = dbo.Accounts.IBAN
+WHERE  (dbo.Transactioncounterpart.TransactionType = 3)
+GO
+/****** Object:  View [dbo].[transactionview2]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[transactionview2]
+AS
+SELECT dbo.incommingtransaction.TransactionId, 'incoming' AS name, dbo.incommingtransaction.AccountId, dbo.Transactions.TransactionDate, dbo.Transactions.Amount, dbo.Transactions.Purpose, 
+                  dbo.Transactioncounterpart.yourIBAN AS counterpartyIBAN, dbo.Transactioncounterpart.CounterpartyIBAN AS yourIBAN, dbo.Transactions.IsDeleted
+FROM     dbo.TransactionTypes INNER JOIN
+                  dbo.Accounts INNER JOIN
+                  dbo.incommingtransaction ON dbo.Accounts.AccountId = dbo.incommingtransaction.AccountId ON dbo.TransactionTypes.TransactionTypeId = dbo.incommingtransaction.TransactionType INNER JOIN
+                  dbo.Transactions ON dbo.incommingtransaction.TransactionId = dbo.Transactions.TransactionId INNER JOIN
+                  dbo.Transactioncounterpart ON dbo.incommingtransaction.TransactionId = dbo.Transactioncounterpart.TransactionId
+GO
+/****** Object:  View [dbo].[transactionview]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[transactionview]
+AS
+SELECT dbo.Transactions.TransactionId, dbo.TransactionTypes.Name, dbo.Transactions.AccountId, dbo.Transactions.TransactionDate, dbo.Transactions.Amount, dbo.Transactions.Purpose, dbo.Transactioncounterpart.CounterpartyIBAN, 
+                  dbo.Transactioncounterpart.yourIBAN, dbo.Transactions.IsDeleted
+FROM     dbo.Transactions INNER JOIN
+                  dbo.TransactionTypes ON dbo.Transactions.TransactionTypeId = dbo.TransactionTypes.TransactionTypeId LEFT OUTER JOIN
+                  dbo.Transactioncounterpart ON dbo.Transactions.TransactionId = dbo.Transactioncounterpart.TransactionId
+GO
+/****** Object:  View [dbo].[finalTransaction]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[finalTransaction]
+AS
+SELECT ROW_NUMBER() OVER (ORDER BY 
+                      (SELECT NULL)) AS Id, /* primary key-like column*/ *
+FROM     (SELECT *
+                  FROM      dbo.transactionview
+                  UNION
+                  SELECT *
+                  FROM     dbo.transactionview2) AS Combined;
+GO
+/****** Object:  View [dbo].[AccountBalance]    Script Date: 10/25/2025 9:13:26 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[AccountBalance]
+AS
+SELECT TOP (100) PERCENT a.AccountId, a.OpeningBalance + ISNULL(SUM(CASE WHEN LOWER(ft.Name) IN ('incoming', 'deposit') THEN ft.Amount WHEN LOWER(ft.Name) IN ('withdrawal', 'transfer') THEN - ft.Amount ELSE 0 END), 0) 
+                  AS TotalBalance
+FROM     dbo.Accounts AS a LEFT OUTER JOIN
+                  dbo.finalTransaction AS ft ON ft.AccountId = a.AccountId
+GROUP BY a.AccountId, a.OpeningBalance
+ORDER BY a.AccountId
+GO
+/****** Object:  Index [IX_Transactions_AccountId_Date]    Script Date: 10/25/2025 9:13:26 PM ******/
+CREATE NONCLUSTERED INDEX [IX_Transactions_AccountId_Date] ON [dbo].[Transactions]
+(
+	[AccountId] ASC,
+	[TransactionDate] ASC,
+	[TransactionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Accounts] ADD  DEFAULT ((0.00)) FOR [OpeningBalance]
+GO
+ALTER TABLE [dbo].[Accounts] ADD  DEFAULT ((0.00)) FOR [CachedBalance]
+GO
+ALTER TABLE [dbo].[Accounts] ADD  DEFAULT ((1)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Accounts] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Accounts] ADD  CONSTRAINT [DF_Accounts_isdeleted]  DEFAULT ((0)) FOR [isdeleted]
+GO
+ALTER TABLE [dbo].[Customers] ADD  CONSTRAINT [DF__Customers__Creat__1ED998B2]  DEFAULT (sysutcdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Customers] ADD  CONSTRAINT [DF_Customers_deleted]  DEFAULT ((0)) FOR [deleted]
+GO
+ALTER TABLE [dbo].[Transactions] ADD  CONSTRAINT [DF__Transacti__Creat__33D4B598]  DEFAULT (sysutcdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Transactions] ADD  CONSTRAINT [DF__Transacti__IsDel__34C8D9D1]  DEFAULT ((0)) FOR [IsDeleted]
+GO
+ALTER TABLE [dbo].[Users] ADD  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [DF_Users_Deleted]  DEFAULT ((0)) FOR [Deleted]
+GO
+ALTER TABLE [dbo].[Accounts]  WITH CHECK ADD  CONSTRAINT [FK_Accounts_Customers] FOREIGN KEY([CustomerId])
+REFERENCES [dbo].[Customers] ([CustomerId])
+GO
+ALTER TABLE [dbo].[Accounts] CHECK CONSTRAINT [FK_Accounts_Customers]
+GO
+ALTER TABLE [dbo].[Transactioncounterpart]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_counterpart] FOREIGN KEY([TransactionId])
+REFERENCES [dbo].[Transactions] ([TransactionId])
+GO
+ALTER TABLE [dbo].[Transactioncounterpart] CHECK CONSTRAINT [FK_Transactions_counterpart]
+GO
+ALTER TABLE [dbo].[Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_Accounts] FOREIGN KEY([AccountId])
+REFERENCES [dbo].[Accounts] ([AccountId])
+GO
+ALTER TABLE [dbo].[Transactions] CHECK CONSTRAINT [FK_Transactions_Accounts]
+GO
+ALTER TABLE [dbo].[Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_TransactionTypes] FOREIGN KEY([TransactionTypeId])
+REFERENCES [dbo].[TransactionTypes] ([TransactionTypeId])
+GO
+ALTER TABLE [dbo].[Transactions] CHECK CONSTRAINT [FK_Transactions_TransactionTypes]
+GO
+ALTER TABLE [dbo].[Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_Users_CreatedBy] FOREIGN KEY([CreatedByUserId])
+REFERENCES [dbo].[Users] ([UserId])
+GO
+ALTER TABLE [dbo].[Transactions] CHECK CONSTRAINT [FK_Transactions_Users_CreatedBy]
+GO
+ALTER TABLE [dbo].[Transactions]  WITH CHECK ADD  CONSTRAINT [FK_Transactions_Users_DeletedBy] FOREIGN KEY([DeletedByUserId])
+REFERENCES [dbo].[Users] ([UserId])
+GO
+ALTER TABLE [dbo].[Transactions] CHECK CONSTRAINT [FK_Transactions_Users_DeletedBy]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "a"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 252
+               Right = 261
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "ft"
+            Begin Extent = 
+               Top = 7
+               Left = 309
+               Bottom = 170
+               Right = 524
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+      Begin ColumnWidths = 9
+         Width = 284
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 12
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'AccountBalance'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'AccountBalance'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+      Begin ColumnWidths = 9
+         Width = 284
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 2796
+         Width = 1200
+         Width = 1200
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'finalTransaction'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'finalTransaction'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "Transactioncounterpart"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 264
+               Right = 263
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Accounts"
+            Begin Extent = 
+               Top = 1
+               Left = 451
+               Bottom = 296
+               Right = 664
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+      Begin ColumnWidths = 9
+         Width = 284
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'incommingtransaction'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'incommingtransaction'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "Transactions"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 306
+               Right = 264
+            End
+            DisplayFlags = 280
+            TopColumn = 1
+         End
+         Begin Table = "TransactionTypes"
+            Begin Extent = 
+               Top = 89
+               Left = 937
+               Bottom = 208
+               Right = 1153
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Transactioncounterpart"
+            Begin Extent = 
+               Top = 15
+               Left = 562
+               Bottom = 236
+               Right = 777
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+      Begin ColumnWidths = 10
+         Width = 284
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'transactionview'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=1 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'transactionview'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane1', @value=N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
+Begin DesignProperties = 
+   Begin PaneConfigurations = 
+      Begin PaneConfiguration = 0
+         NumPanes = 4
+         Configuration = "(H (1[48] 4[15] 2[20] 3) )"
+      End
+      Begin PaneConfiguration = 1
+         NumPanes = 3
+         Configuration = "(H (1 [50] 4 [25] 3))"
+      End
+      Begin PaneConfiguration = 2
+         NumPanes = 3
+         Configuration = "(H (1 [50] 2 [25] 3))"
+      End
+      Begin PaneConfiguration = 3
+         NumPanes = 3
+         Configuration = "(H (4 [30] 2 [40] 3))"
+      End
+      Begin PaneConfiguration = 4
+         NumPanes = 2
+         Configuration = "(H (1 [56] 3))"
+      End
+      Begin PaneConfiguration = 5
+         NumPanes = 2
+         Configuration = "(H (2 [66] 3))"
+      End
+      Begin PaneConfiguration = 6
+         NumPanes = 2
+         Configuration = "(H (4 [50] 3))"
+      End
+      Begin PaneConfiguration = 7
+         NumPanes = 1
+         Configuration = "(V (3))"
+      End
+      Begin PaneConfiguration = 8
+         NumPanes = 3
+         Configuration = "(H (1[56] 4[18] 2) )"
+      End
+      Begin PaneConfiguration = 9
+         NumPanes = 2
+         Configuration = "(H (1 [75] 4))"
+      End
+      Begin PaneConfiguration = 10
+         NumPanes = 2
+         Configuration = "(H (1[66] 2) )"
+      End
+      Begin PaneConfiguration = 11
+         NumPanes = 2
+         Configuration = "(H (4 [60] 2))"
+      End
+      Begin PaneConfiguration = 12
+         NumPanes = 1
+         Configuration = "(H (1) )"
+      End
+      Begin PaneConfiguration = 13
+         NumPanes = 1
+         Configuration = "(V (4))"
+      End
+      Begin PaneConfiguration = 14
+         NumPanes = 1
+         Configuration = "(V (2))"
+      End
+      ActivePaneConfig = 0
+   End
+   Begin DiagramPane = 
+      Begin Origin = 
+         Top = 0
+         Left = 0
+      End
+      Begin Tables = 
+         Begin Table = "TransactionTypes"
+            Begin Extent = 
+               Top = 237
+               Left = 34
+               Bottom = 356
+               Right = 250
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Accounts"
+            Begin Extent = 
+               Top = 0
+               Left = 364
+               Bottom = 279
+               Right = 577
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "incommingtransaction"
+            Begin Extent = 
+               Top = 7
+               Left = 48
+               Bottom = 197
+               Right = 263
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "Transactions"
+            Begin Extent = 
+               Top = 22
+               Left = 705
+               Bottom = 278
+               Right = 921
+            End
+            DisplayFlags = 280
+            TopColumn = 3
+         End
+         Begin Table = "Transactioncounterpart"
+            Begin Extent = 
+               Top = 7
+               Left = 969
+               Bottom = 170
+               Right = 1184
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+      End
+   End
+   Begin SQLPane = 
+   End
+   Begin DataPane = 
+      Begin ParameterDefaults = ""
+      End
+      Begin ColumnWidths = 10
+         Width = 284
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 1200
+         Width = 3072
+         Width = 4836
+         Width = 1200
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWi' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'transactionview2'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPane2', @value=N'dths = 11
+         Column = 1440
+         Alias = 900
+         Table = 1176
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1356
+         SortOrder = 1416
+         GroupBy = 1350
+         Filter = 1356
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'transactionview2'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_DiagramPaneCount', @value=2 , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'VIEW',@level1name=N'transactionview2'
+GO
+USE [master]
+GO
+ALTER DATABASE [BankApp] SET  READ_WRITE 
+GO

@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px 60px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(56, 189, 248, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.8s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+
+        .loader {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px auto;
+        }
+
+        .circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid transparent;
+            border-top-color: #38bdf8;
+            border-right-color: #3b82f6;
+            border-bottom-color: #6366f1;
+            border-left-color: #a855f7;
+            animation: spin 1.2s linear infinite;
+        }
+
+        .text {
+            color: #f1f5f9;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+
+        .subtext {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* === LOGIN FORM === */
+        .login-form {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+            .login-form.show {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        .login-title {
+            color: #f8fafc;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 240px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #f1f5f9;
+            font-size: 15px;
+            outline: none;
+            transition: background 0.3s ease;
+        }
+
+            input:focus {
+                background: rgba(255,255,255,0.2);
+            }
+
+        button {
+            padding: 12px 40px;
+            background: linear-gradient(90deg, #38bdf8, #6366f1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(99,102,241,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            button:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(99,102,241,0.6);
+            }
+
+        .fadeOut {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s ease;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="container" id="loadingScreen">
+    <div class="loader"><div class="circle"></div></div>
+    <div class="text">Loading your Application...</div>
+    <div class="subtext">Please wait a few seconds</div>
+  </div>
+
+  <div class="container login-form" id="loginForm">
+    <div class="login-title">Welcome Back 👋</div>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="loginBtn">Login</button>
+  </div>
+
+  <script>
+    // Show login form after 4 seconds
+    setTimeout(() => {
+      document.getElementById("loadingScreen").classList.add("fadeOut");
+      setTimeout(() => {
+        document.getElementById("loadingScreen").style.display = "none";
+        document.getElementById("loginForm").classList.add("show");
+      }, 1000);
+    }, 4000);
+
+    // Send login data to WinForms
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const data = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      };
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage(JSON.stringify(data));
+      }
+      });
+
+      // 🔹 Called by C# to show alerts (success/error)
+      function showAlert(type, message) {
+          Swal.fire({
+              icon: type,
+              title: message,
+              showConfirmButton: false,
+              timer: 2500,
+              background: '#1e293b',
+              color: '#f8fafc'
+          });
+      }
+  </script>
+</body>
+</html>

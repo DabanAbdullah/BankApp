@@ -1,0 +1,695 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="BankAppModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Accounts">
+          <Key>
+            <PropertyRef Name="AccountId" />
+          </Key>
+          <Property Name="AccountId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IBAN" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="AccountName" Type="nvarchar" MaxLength="200" />
+          <Property Name="OpeningBalance" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="CachedBalance" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="BalanceChecksum" Type="binary" MaxLength="32" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime2" Precision="7" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="isdeleted" Type="bit" Nullable="false" />
+          <Property Name="deletedby" Type="int" />
+        </EntityType>
+        <EntityType Name="Customers">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Street" Type="nvarchar" MaxLength="200" />
+          <Property Name="HouseNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="ZipCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="PhoneNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="EmailAddress" Type="nvarchar" MaxLength="200" />
+          <Property Name="CreatedAt" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="ModifiedAt" Type="datetime2" Precision="7" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="TaxId" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="deleted" Type="bit" />
+          <Property Name="deletedby" Type="int" />
+        </EntityType>
+        <EntityType Name="RoleTBL">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoleName" Type="nvarchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TransactionAudit">
+          <Key>
+            <PropertyRef Name="AuditId" />
+          </Key>
+          <Property Name="AuditId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TransactionId" Type="bigint" />
+          <Property Name="AccountId" Type="int" />
+          <Property Name="Action" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="OldAmount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="NewAmount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="PerformedByUserId" Type="int" />
+          <Property Name="PerformedAt" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Details" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="Transactioncounterpart">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="CounterpartyIBAN" />
+            <PropertyRef Name="yourIBAN" />
+            <PropertyRef Name="TransactionType" />
+          </Key>
+          <Property Name="TransactionId" Type="bigint" Nullable="false" />
+          <Property Name="CounterpartyIBAN" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="yourIBAN" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="TransactionType" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Transactions">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+          </Key>
+          <Property Name="TransactionId" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AccountId" Type="int" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Purpose" Type="nvarchar" MaxLength="200" />
+          <Property Name="TransactionTypeId" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="int" />
+          <Property Name="CreatedAt" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="DeletedByUserId" Type="int" />
+          <Property Name="DeletedAt" Type="datetime2" Precision="7" />
+        </EntityType>
+        <EntityType Name="TransactionTypes">
+          <Key>
+            <PropertyRef Name="TransactionTypeId" />
+          </Key>
+          <Property Name="TransactionTypeId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="200" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Role" Type="smallint" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+          <Property Name="deletedby" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BankApp.dbo.AccountBalance' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AccountBalance">
+          <Key>
+            <PropertyRef Name="AccountId" />
+          </Key>
+          <Property Name="AccountId" Type="int" Nullable="false" />
+          <Property Name="TotalBalance" Type="decimal" Precision="38" Scale="2" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'BankApp.dbo.finalTransaction' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="finalTransaction">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="AccountId" />
+            <PropertyRef Name="TransactionDate" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="IsDeleted" />
+          </Key>
+          <Property Name="Id" Type="bigint" />
+          <Property Name="TransactionId" Type="bigint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AccountId" Type="int" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Purpose" Type="nvarchar" MaxLength="200" />
+          <Property Name="CounterpartyIBAN" Type="nvarchar" MaxLength="64" />
+          <Property Name="yourIBAN" Type="nvarchar" MaxLength="64" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Accounts_Customers">
+          <End Role="Customers" Type="Self.Customers" Multiplicity="1" />
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="Accounts">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Accounts">
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="AccountId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="AccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_counterpart">
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="1" />
+          <End Role="Transactioncounterpart" Type="Self.Transactioncounterpart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Transactions">
+              <PropertyRef Name="TransactionId" />
+            </Principal>
+            <Dependent Role="Transactioncounterpart">
+              <PropertyRef Name="TransactionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_TransactionTypes">
+          <End Role="TransactionTypes" Type="Self.TransactionTypes" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TransactionTypes">
+              <PropertyRef Name="TransactionTypeId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="TransactionTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Users_CreatedBy">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="CreatedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Users_DeletedBy">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transactions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BankAppModelStoreContainer">
+          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RoleTBL" EntityType="Self.RoleTBL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TransactionAudit" EntityType="Self.TransactionAudit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Transactioncounterpart" EntityType="Self.Transactioncounterpart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Transactions" EntityType="Self.Transactions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TransactionTypes" EntityType="Self.TransactionTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccountBalance" EntityType="Self.AccountBalance" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AccountBalance].[AccountId] AS [AccountId], 
+    [AccountBalance].[TotalBalance] AS [TotalBalance]
+    FROM [dbo].[AccountBalance] AS [AccountBalance]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="finalTransaction" EntityType="Self.finalTransaction" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [finalTransaction].[Id] AS [Id], 
+    [finalTransaction].[TransactionId] AS [TransactionId], 
+    [finalTransaction].[Name] AS [Name], 
+    [finalTransaction].[AccountId] AS [AccountId], 
+    [finalTransaction].[TransactionDate] AS [TransactionDate], 
+    [finalTransaction].[Amount] AS [Amount], 
+    [finalTransaction].[Purpose] AS [Purpose], 
+    [finalTransaction].[CounterpartyIBAN] AS [CounterpartyIBAN], 
+    [finalTransaction].[yourIBAN] AS [yourIBAN], 
+    [finalTransaction].[IsDeleted] AS [IsDeleted]
+    FROM [dbo].[finalTransaction] AS [finalTransaction]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Accounts_Customers" Association="Self.FK_Accounts_Customers">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Accounts" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Accounts" Association="Self.FK_Transactions_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_counterpart" Association="Self.FK_Transactions_counterpart">
+            <End Role="Transactions" EntitySet="Transactions" />
+            <End Role="Transactioncounterpart" EntitySet="Transactioncounterpart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_TransactionTypes" Association="Self.FK_Transactions_TransactionTypes">
+            <End Role="TransactionTypes" EntitySet="TransactionTypes" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Users_CreatedBy" Association="Self.FK_Transactions_Users_CreatedBy">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Users_DeletedBy" Association="Self.FK_Transactions_Users_DeletedBy">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BankAppModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="AccountId" />
+          </Key>
+          <Property Name="AccountId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IBAN" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="AccountName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="OpeningBalance" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="CachedBalance" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="BalanceChecksum" Type="Binary" MaxLength="32" FixedLength="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="7" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <NavigationProperty Name="Customer" Relationship="Self.FK_Accounts_Customers" FromRole="Accounts" ToRole="Customers" />
+          <NavigationProperty Name="Transactions" Relationship="Self.FK_Transactions_Accounts" FromRole="Accounts" ToRole="Transactions" />
+          <Property Name="isdeleted" Type="Boolean" Nullable="false" />
+          <Property Name="deletedby" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Street" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="HouseNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ZipCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="ModifiedAt" Type="DateTime" Precision="7" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="TaxId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Accounts" Relationship="Self.FK_Accounts_Customers" FromRole="Customers" ToRole="Accounts" />
+          <Property Name="deleted" Type="Boolean" />
+          <Property Name="deletedby" Type="Int32" />
+        </EntityType>
+        <EntityType Name="RoleTBL">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int16" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoleName" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TransactionAudit">
+          <Key>
+            <PropertyRef Name="AuditId" />
+          </Key>
+          <Property Name="AuditId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TransactionId" Type="Int64" />
+          <Property Name="AccountId" Type="Int32" />
+          <Property Name="Action" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="OldAmount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="NewAmount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PerformedByUserId" Type="Int32" />
+          <Property Name="PerformedAt" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Details" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Transaction">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+          </Key>
+          <Property Name="TransactionId" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" />
+          <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Amount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Purpose" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionTypeId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="Int32" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="DeletedByUserId" Type="Int32" />
+          <Property Name="DeletedAt" Type="DateTime" Precision="7" />
+          <NavigationProperty Name="Account" Relationship="Self.FK_Transactions_Accounts" FromRole="Transactions" ToRole="Accounts" />
+          <NavigationProperty Name="TransactionType" Relationship="Self.FK_Transactions_TransactionTypes" FromRole="Transactions" ToRole="TransactionTypes" />
+          <NavigationProperty Name="User" Relationship="Self.FK_Transactions_Users_CreatedBy" FromRole="Transactions" ToRole="Users" />
+          <NavigationProperty Name="User1" Relationship="Self.FK_Transactions_Users_DeletedBy" FromRole="Transactions" ToRole="Users" />
+          <NavigationProperty Name="Transactioncounterparts" Relationship="BankAppModel.FK_Transactions_counterpart" FromRole="Transaction" ToRole="Transactioncounterpart" />
+        </EntityType>
+        <EntityType Name="TransactionType">
+          <Key>
+            <PropertyRef Name="TransactionTypeId" />
+          </Key>
+          <Property Name="TransactionTypeId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Transactions" Relationship="Self.FK_Transactions_TransactionTypes" FromRole="TransactionTypes" ToRole="Transactions" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="Int16" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Transactions" Relationship="Self.FK_Transactions_Users_CreatedBy" FromRole="Users" ToRole="Transactions" />
+          <NavigationProperty Name="Transactions1" Relationship="Self.FK_Transactions_Users_DeletedBy" FromRole="Users" ToRole="Transactions" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="deletedby" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Accounts_Customers">
+          <End Role="Customers" Type="Self.Customer" Multiplicity="1" />
+          <End Role="Accounts" Type="Self.Account" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customers">
+              <PropertyRef Name="CustomerId" />
+            </Principal>
+            <Dependent Role="Accounts">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Accounts">
+          <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="AccountId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="AccountId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_TransactionTypes">
+          <End Role="TransactionTypes" Type="Self.TransactionType" Multiplicity="1" />
+          <End Role="Transactions" Type="Self.Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TransactionTypes">
+              <PropertyRef Name="TransactionTypeId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="TransactionTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Users_CreatedBy">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="CreatedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transactions_Users_DeletedBy">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Transactions" Type="Self.Transaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Transactions">
+              <PropertyRef Name="DeletedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BankAppEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Accounts" EntityType="Self.Account" />
+          <EntitySet Name="Customers" EntityType="Self.Customer" />
+          <EntitySet Name="RoleTBLs" EntityType="Self.RoleTBL" />
+          <EntitySet Name="TransactionAudits" EntityType="Self.TransactionAudit" />
+          <EntitySet Name="Transactions" EntityType="Self.Transaction" />
+          <EntitySet Name="TransactionTypes" EntityType="Self.TransactionType" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK_Accounts_Customers" Association="Self.FK_Accounts_Customers">
+            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Accounts" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Accounts" Association="Self.FK_Transactions_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_TransactionTypes" Association="Self.FK_Transactions_TransactionTypes">
+            <End Role="TransactionTypes" EntitySet="TransactionTypes" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Users_CreatedBy" Association="Self.FK_Transactions_Users_CreatedBy">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transactions_Users_DeletedBy" Association="Self.FK_Transactions_Users_DeletedBy">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Transactions" EntitySet="Transactions" />
+          </AssociationSet>
+          <EntitySet Name="finalTransactions" EntityType="BankAppModel.finalTransaction" />
+          <EntitySet Name="Transactioncounterparts" EntityType="BankAppModel.Transactioncounterpart" />
+          <AssociationSet Name="FK_Transactions_counterpart" Association="BankAppModel.FK_Transactions_counterpart">
+            <End Role="Transaction" EntitySet="Transactions" />
+            <End Role="Transactioncounterpart" EntitySet="Transactioncounterparts" />
+          </AssociationSet>
+          <EntitySet Name="AccountBalances" EntityType="BankAppModel.AccountBalance" />
+        </EntityContainer>
+        <EntityType Name="finalTransaction">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="AccountId" />
+            <PropertyRef Name="TransactionDate" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="IsDeleted" />
+          </Key>
+          <Property Name="Id" Type="Int64" />
+          <Property Name="TransactionId" Type="Int64" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AccountId" Type="Int32" Nullable="false" />
+          <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="Purpose" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CounterpartyIBAN" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="yourIBAN" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Transactioncounterpart">
+          <Key>
+            <PropertyRef Name="TransactionId" />
+            <PropertyRef Name="CounterpartyIBAN" />
+            <PropertyRef Name="yourIBAN" />
+            <PropertyRef Name="TransactionType" />
+          </Key>
+          <Property Name="TransactionId" Type="Int64" Nullable="false" />
+          <Property Name="CounterpartyIBAN" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="yourIBAN" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="TransactionType" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Transaction" Relationship="BankAppModel.FK_Transactions_counterpart" FromRole="Transactioncounterpart" ToRole="Transaction" />
+        </EntityType>
+        <Association Name="FK_Transactions_counterpart">
+          <End Type="BankAppModel.Transaction" Role="Transaction" Multiplicity="1" />
+          <End Type="BankAppModel.Transactioncounterpart" Role="Transactioncounterpart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Transaction">
+              <PropertyRef Name="TransactionId" />
+            </Principal>
+            <Dependent Role="Transactioncounterpart">
+              <PropertyRef Name="TransactionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AccountBalance">
+          <Key>
+            <PropertyRef Name="AccountId" />
+          </Key>
+          <Property Name="AccountId" Type="Int32" Nullable="false" />
+          <Property Name="TotalBalance" Type="Decimal" Precision="38" Scale="2" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BankAppModelStoreContainer" CdmEntityContainer="BankAppEntities">
+          <EntitySetMapping Name="Accounts">
+            <EntityTypeMapping TypeName="BankAppModel.Account">
+              <MappingFragment StoreEntitySet="Accounts">
+                <ScalarProperty Name="deletedby" ColumnName="deletedby" />
+                <ScalarProperty Name="isdeleted" ColumnName="isdeleted" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="IBAN" ColumnName="IBAN" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="AccountName" ColumnName="AccountName" />
+                <ScalarProperty Name="OpeningBalance" ColumnName="OpeningBalance" />
+                <ScalarProperty Name="CachedBalance" ColumnName="CachedBalance" />
+                <ScalarProperty Name="BalanceChecksum" ColumnName="BalanceChecksum" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="BankAppModel.Customer">
+              <MappingFragment StoreEntitySet="Customers">
+                <ScalarProperty Name="deletedby" ColumnName="deletedby" />
+                <ScalarProperty Name="deleted" ColumnName="deleted" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Street" ColumnName="Street" />
+                <ScalarProperty Name="HouseNumber" ColumnName="HouseNumber" />
+                <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ModifiedAt" ColumnName="ModifiedAt" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="TaxId" ColumnName="TaxId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RoleTBLs">
+            <EntityTypeMapping TypeName="BankAppModel.RoleTBL">
+              <MappingFragment StoreEntitySet="RoleTBL">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TransactionAudits">
+            <EntityTypeMapping TypeName="BankAppModel.TransactionAudit">
+              <MappingFragment StoreEntitySet="TransactionAudit">
+                <ScalarProperty Name="AuditId" ColumnName="AuditId" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="OldAmount" ColumnName="OldAmount" />
+                <ScalarProperty Name="NewAmount" ColumnName="NewAmount" />
+                <ScalarProperty Name="PerformedByUserId" ColumnName="PerformedByUserId" />
+                <ScalarProperty Name="PerformedAt" ColumnName="PerformedAt" />
+                <ScalarProperty Name="Details" ColumnName="Details" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Transactions">
+            <EntityTypeMapping TypeName="BankAppModel.Transaction">
+              <MappingFragment StoreEntitySet="Transactions">
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
+                <ScalarProperty Name="TransactionTypeId" ColumnName="TransactionTypeId" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="DeletedByUserId" ColumnName="DeletedByUserId" />
+                <ScalarProperty Name="DeletedAt" ColumnName="DeletedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TransactionTypes">
+            <EntityTypeMapping TypeName="BankAppModel.TransactionType">
+              <MappingFragment StoreEntitySet="TransactionTypes">
+                <ScalarProperty Name="TransactionTypeId" ColumnName="TransactionTypeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="BankAppModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="deletedby" ColumnName="deletedby" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="finalTransactions">
+            <EntityTypeMapping TypeName="BankAppModel.finalTransaction">
+              <MappingFragment StoreEntitySet="finalTransaction">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="yourIBAN" ColumnName="yourIBAN" />
+                <ScalarProperty Name="CounterpartyIBAN" ColumnName="CounterpartyIBAN" />
+                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Transactioncounterparts">
+            <EntityTypeMapping TypeName="BankAppModel.Transactioncounterpart">
+              <MappingFragment StoreEntitySet="Transactioncounterpart">
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="yourIBAN" ColumnName="yourIBAN" />
+                <ScalarProperty Name="CounterpartyIBAN" ColumnName="CounterpartyIBAN" />
+                <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccountBalances">
+            <EntityTypeMapping TypeName="BankAppModel.AccountBalance">
+              <MappingFragment StoreEntitySet="AccountBalance">
+                <ScalarProperty Name="TotalBalance" ColumnName="TotalBalance" />
+                <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

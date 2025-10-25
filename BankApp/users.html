@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Management</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-light: #3b82f6;
+    --bg: #f3f4f6;
+    --card-bg: #ffffff;
+    --border: #e5e7eb;
+    --text-dark: #111827;
+    --text-muted: #6b7280;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .form-card {
+    background: var(--card-bg);
+    width: 400px;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  button:hover { background: var(--primary-light); }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="form-card">
+  <div class="form-title">Add / Edit User</div>
+
+  <form id="userForm">
+    <div class="form-group">
+      <label for="username">Username *</label>
+      <input type="text" id="username" name="Username" required placeholder="Enter username">
+    </div>
+
+    <div class="form-group">
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" name="FullName" placeholder="Enter full name">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password *</label>
+      <input type="password" id="password" name="Password" required placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+      <label for="role">Role *</label>
+      <select id="role" name="Role" required>
+        <option value="">Select role...</option>
+      </select>
+    </div>
+
+    <div class="form-group checkbox">
+      <input type="checkbox" id="isActive" name="IsActive" checked>
+      <label for="isActive">Active User</label>
+    </div>
+
+    <button type="submit">Save User</button>
+  </form>
+
+  <div class="form-footer">© 2025 BankApp System</div>
+</div>
+
+<script>
+  // Local Role data
+  const roles = [
+    { RoleId: 1, RoleName: "admin" },
+    { RoleId: 2, RoleName: "users" },
+   
+  ];
+
+  const roleSelect = document.getElementById('role');
+  roles.forEach(role => {
+    const opt = document.createElement('option');
+    opt.value = role.RoleId;
+    opt.textContent = role.RoleName;
+    roleSelect.appendChild(opt);
+  });
+
+  // On submit — send to WinForms
+    document.getElementById('userForm').addEventListener('submit', e => {
+        e.preventDefault();
+
+        // Build a clean JS object explicitly
+        const data = {
+            username: document.getElementById('username').value.trim(),
+            fullName: document.getElementById('fullname').value.trim(),
+            password: document.getElementById('password').value,
+            role: parseInt(document.getElementById('role').value) || 0,
+            isActive: document.getElementById('isActive').checked
+        };
+
+        // Send to WinForms via WebView2
+        if (window.chrome ?.webview) {
+            window.chrome.webview.postMessage(data);
+        } else {
+            console.log("Form data:", data); // fallback for preview
+        }
+    });
+</script>
+
+</body>
+</html>
